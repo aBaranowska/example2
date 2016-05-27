@@ -89,6 +89,8 @@ public class MyVaadinApplication extends Application {
         tree.setNullSelectionAllowed(false);
         tree.setDragMode(TableDragMode.ROW);
         tree.setDropHandler(new TreeDropHandler());
+        tree.setSelectable(true);
+        tree.addListener(new TreeItemClickListener());
 
         tree.addContainerProperty("name", String.class, null);
 
