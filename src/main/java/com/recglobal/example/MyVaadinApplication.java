@@ -3,7 +3,6 @@ package com.recglobal.example;
 import java.util.Collection;
 
 import com.vaadin.Application;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
@@ -17,6 +16,8 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings({ "serial", "unused" })
 public class MyVaadinApplication extends Application {
+
+    private static final int NODES_COUNT = 1000;
 
     @Override
     public void init() {
@@ -52,25 +53,26 @@ public class MyVaadinApplication extends Application {
         tree.setNullSelectionAllowed(false);
         tree.setDragMode(TreeDragMode.NODE);
         tree.setDropHandler(new TreeDropHandler());
-
+        tree.setSelectable(true);
+        tree.addListener(new TreeItemClickListener());
         tree.removeAllItems();
 
         String planet = "A";
-        TestBean planetBean = new TestBean(planet);
+        TestBean planetBean = new TestBean(1, planet);
         tree.setItemCaption(planetBean, planetBean.getName());
         tree.setItemIcon(planetBean, new ThemeResource("img/themeimage.png"));
         tree.addItem(planetBean);
 
         String moon = "B";
-        TestBean moonBean = new TestBean(moon);
+        TestBean moonBean = new TestBean(2, moon);
         tree.setItemCaption(moonBean, moonBean.getName());
         tree.setItemIcon(moonBean, new ThemeResource("img/themeimage.png"));
         tree.addItem(moonBean);
         tree.setParent(moonBean, planetBean);
 
-        for (int k = 0; k < 5000; k++) {
+        for (int k = 0; k < NODES_COUNT; k++) {
             String child = "C" + k;
-            TestBean childBean = new TestBean(child);
+            TestBean childBean = new TestBean(3 + k, child);
             tree.setItemCaption(childBean, childBean.getName());
             tree.setItemIcon(childBean, new ThemeResource("img/themeimage.png"));
             tree.addItem(childBean);
@@ -89,23 +91,20 @@ public class MyVaadinApplication extends Application {
         HierarchicalContainer container = new HierarchicalContainer();
 
         String planet = "A";
-        TestBean planetBean = new TestBean(planet);
-        BeanItem<TestBean> planetBeanItem = new BeanItem<TestBean>(planetBean);
-        container.addItem(planetBeanItem);
+        TestBean planetBean = new TestBean(1, planet);
+        container.addItem(planetBean);
 
         String moon = "B";
-        TestBean moonBean = new TestBean(moon);
-        BeanItem<TestBean> moonBeanItem = new BeanItem<TestBean>(moonBean);
-        container.addItem(moonBeanItem);
-        container.setParent(moonBeanItem, planetBeanItem);
+        TestBean moonBean = new TestBean(2, moon);
+        container.addItem(moonBean);
+        container.setParent(moonBean, planetBean);
 
-        for (int k = 0; k < 5000; k++) {
+        for (int k = 0; k < NODES_COUNT; k++) {
             String child = "C" + k;
-            TestBean childBean = new TestBean(child);
-            BeanItem<TestBean> childBeanItem = new BeanItem<TestBean>(childBean);
-            container.addItem(childBeanItem);
-            container.setParent(childBeanItem, moonBeanItem);
-            container.setChildrenAllowed(childBeanItem, false);
+            TestBean childBean = new TestBean(3 + k, child);
+            container.addItem(childBean);
+            container.setParent(childBean, moonBean);
+            container.setChildrenAllowed(childBean, false);
         }
 
         Tree tree = new Tree();
@@ -113,7 +112,8 @@ public class MyVaadinApplication extends Application {
         tree.setNullSelectionAllowed(false);
         tree.setDragMode(TreeDragMode.NODE);
         tree.setDropHandler(new TreeDropHandler());
-
+        tree.setSelectable(true);
+        tree.addListener(new TreeItemClickListener());
         tree.removeAllItems();
 
         tree.setContainerDataSource(container);
@@ -123,9 +123,9 @@ public class MyVaadinApplication extends Application {
             tree.setItemIcon(id, new ThemeResource("img/themeimage.png"));
         }
 
-        tree.select(planetBeanItem);
+        tree.select(planetBean);
 
-        tree.expandItemsRecursively(planetBeanItem);
+        tree.expandItemsRecursively(planetBean);
 
         return tree;
     }
@@ -139,27 +139,26 @@ public class MyVaadinApplication extends Application {
         tree.setDropHandler(new TreeDropHandler());
         tree.setSelectable(true);
         tree.addListener(new TreeItemClickListener());
+        tree.removeAllItems();
 
         tree.addContainerProperty("name", String.class, null);
 
-        tree.removeAllItems();
-
         String planet = "A";
-        TestBean planetBean = new TestBean(planet);
+        TestBean planetBean = new TestBean(1, planet);
         tree.setItemIcon(planetBean, new ThemeResource("img/themeimage.png"));
         tree.addItem(new Object[] { planetBean.getName() }, planetBean);
         tree.setCollapsed(planetBean, false);
 
         String moon = "B";
-        TestBean moonBean = new TestBean(moon);
+        TestBean moonBean = new TestBean(2, moon);
         tree.setItemIcon(moonBean, new ThemeResource("img/themeimage.png"));
         tree.addItem(new Object[] { moonBean.getName() }, moonBean);
         tree.setParent(moonBean, planetBean);
         tree.setCollapsed(moonBean, false);
 
-        for (int k = 0; k < 5000; k++) {
+        for (int k = 0; k < NODES_COUNT; k++) {
             String child = "C" + k;
-            TestBean childBean = new TestBean(child);
+            TestBean childBean = new TestBean(3 + k, child);
             tree.setItemIcon(childBean, new ThemeResource("img/themeimage.png"));
             tree.addItem(new Object[] { childBean.getName() }, childBean);
             tree.setParent(childBean, moonBean);
